@@ -1,0 +1,30 @@
+<div class="app-shell" [class.accessible-mode]="accessible()">
+  <header class="topbar"><a class="brand" href="#top"><span class="brand-mark">P</span><span>PataBatao<small>VOICE-FIRST LOCATION INTELLIGENCE</small></span></a><div class="top-actions"><button class="quiet-button" (click)="accessible.set(!accessible())" [attr.aria-pressed]="accessible()">♿ Accessibility</button><span class="live-pill"><i></i> AI READY</span></div></header>
+  <main id="top" class="layout">
+    <section class="hero-panel">
+      <div class="eyebrow">YOUR VOICE. YOUR LANGUAGE. YOUR DESTINATION.</div>
+      <h1>Where would<br>you like to go?</h1>
+      <p class="intro">Speak naturally in Gujarati, Hindi or English. PataBatao understands your destination and helps you find the right place.</p>
+      <div class="language-row"><label for="language">Language</label><select id="language" [ngModel]="language()" (ngModelChange)="language.set($event)"><option value="auto">Auto detect</option><option value="gu">ગુજરાતી</option><option value="hi">हिन्दी</option><option value="en">English</option></select><button class="text-button" (click)="locateMe()">◎ Use my location</button></div>
+      <div class="voice-card"><button class="mic-button" [class.recording]="listening()" (click)="startVoice()" [disabled]="busy()" aria-label="Start voice search"><span>{{ listening() ? 'Ⅱ' : '🎙' }}</span></button><strong>{{ listening() ? 'Listening…' : 'Tap to speak' }}</strong><small>Try a place, landmark or natural-language description</small></div>
+      <button class="gnani-button" (click)="startGnaniVoice()" [disabled]="busy() || listening()">Record 6 seconds · Gnani.ai server transcription</button>
+      <div class="or-divider"><span>OR TYPE YOUR DESTINATION</span></div>
+      <div class="search-row"><input aria-label="Destination" [ngModel]="query()" (ngModelChange)="query.set($event)" (keyup.enter)="findDestination()" placeholder="e.g. Hospital near Ahmedabad station"><button class="primary-button" (click)="findDestination()" [disabled]="busy()">{{ busy() ? 'Searching…' : 'Find place →' }}</button></div>
+      <div class="examples"><span>Try:</span><button (click)="query.set('Hospital near ISKCON Temple, Ahmedabad'); findDestination()">Hospital near ISKCON Temple</button><button (click)="query.set('મને અમદાવાદમાં સિવિલ હોસ્પિટલ જવું છે'); findDestination()">Gujarati voice query</button></div>
+      <div class="status-line"><span class="status-dot"></span>{{ status() }}</div>
+      <div class="error-box" *ngIf="error()" role="alert">{{ error() }}</div>
+      <div class="transcript" *ngIf="transcript()"><small>YOU SAID</small><p>“{{ transcript() }}”</p></div>
+      <div class="interpret-card" *ngIf="interpretation() as i"><small>AI UNDERSTANDING · {{ i.language | uppercase }}</small><div class="intent-row"><b>{{ i.intent | titlecase }}</b><span>{{ i.destination.name }}</span></div><p *ngIf="i.destination.city">Area: {{ i.destination.city }}</p><p *ngIf="i.needs_clarification">{{ i.clarification_question }}</p></div>
+    </section>
+    <section class="results-panel">
+      <div class="panel-heading"><div><span class="eyebrow">LOCATION INTELLIGENCE</span><h2>Find your destination</h2></div><button class="icon-button" (click)="reset()" title="Reset">↻</button></div>
+      <div class="map-frame"><div #mapElement class="map-canvas"></div><div class="map-placeholder" *ngIf="!selected()"><span>⌖</span><b>Your map appears here</b><small>Search and select a destination to preview it.</small></div></div>
+      <div class="result-list" *ngIf="places().length"><div class="result-title"><b>{{ places().length }} matching places</b><small>Choose the correct destination</small></div><button class="place-card" *ngFor="let place of places(); let i = index" (click)="choosePlace(place)" [class.selected]="selected()?.place_id === place.place_id"><span class="place-number">{{ i + 1 }}</span><span class="place-info"><b>{{ place.name }}</b><small>{{ place.address }}</small><small *ngIf="place.rating">★ {{ place.rating }}</small></span><span class="chevron">›</span></button></div>
+      <div class="selected-card" *ngIf="selected() as p"><div class="selected-heading"><span class="check-icon">✓</span><div><small>CONFIRMED DESTINATION</small><b>{{ p.name }}</b></div></div><p>{{ p.address }}</p><div class="route-info" *ngIf="route() as r"><span>↔ {{ (r.distance_meters || 0) / 1000 | number:'1.1-1' }} km</span><span>◷ {{ r.duration || 'Route ready' }}</span></div><div class="button-row"><button class="primary-button" (click)="startNavigation()" [disabled]="busy()">Calculate route</button><button class="secondary-button" (click)="openGoogleMaps()">Open Maps ↗</button></div></div>
+      <div class="impact-card"><div class="impact-icon">♥</div><div><b>Designed for everyone</b><p>Voice-first search helps reduce language and typing barriers for older adults and people who find traditional maps difficult.</p></div></div>
+      <div class="emergency-card"><div><b>Need help?</b><p>Share your current location with a trusted contact. Your permission is required.</p></div><button class="emergency-button" (click)="shareEmergency()">Share my location</button><small *ngIf="emergencyMessage()">{{ emergencyMessage() }}</small></div>
+      <button class="speak-button" (click)="speakStatus()">🔊 Read status aloud</button>
+    </section>
+  </main>
+  <footer> <span>© PataBatao · Hackathon prototype</span><span>AI interprets · Maps verifies · You confirm</span></footer>
+</div>

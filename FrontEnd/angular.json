@@ -1,0 +1,25 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "patabatao": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {"outputPath": "dist/patabatao", "index": "src/index.html", "browser": "src/main.ts", "polyfills": ["zone.js"], "tsConfig": "tsconfig.app.json", "assets": [], "styles": ["src/styles.css"]},
+          "configurations": {"production": {"optimization": true, "outputHashing": "all", "budgets": [{"type": "initial", "maximumWarning": "1.5MB", "maximumError": "3MB"}]}, "development": {"optimization": false, "extractLicenses": false, "sourceMap": true}},
+          "defaultConfiguration": "production"
+        },
+        "serve": {"builder": "@angular/build:dev-server", "configurations": {"production": {"buildTarget": "patabatao:build:production"}, "development": {"buildTarget": "patabatao:build:development"}}, "defaultConfiguration": "development"}
+      }
+    }
+  },
+  "cli": {
+    "analytics": "2389794f-b752-4d40-8f37-1ca05fe9ab3d"
+  }
+}
